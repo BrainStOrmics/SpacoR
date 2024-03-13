@@ -76,6 +76,7 @@ colorize <- function(
   # Restore manual colors, reorder color mapping by cluster names.
   # color_mapping <- c(mapping_args, embed_args)
   # color_mapping <- color_mapping[order(names(color_mapping))]
+  color_mapping <- unlist(color_mapping)
   return(color_mapping)
 }
 

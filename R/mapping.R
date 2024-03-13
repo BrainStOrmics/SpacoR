@@ -20,12 +20,6 @@ map_graph <- function(
     random_max_iter = 5000,
     verbose = FALSE
 ) {
-  # print(cluster_distance)
-  # print(dim(cluster_distance))
-  # print(dim(color_distance))
-  # print(dim(cluster_distance) == dim(color_distance))
-  # stopifnot(dim(cluster_distance) == dim(color_distance), "Clusters and colors are not in the same size.")
-
   set.seed(random_seed)
 
   color_shuffle_index <- 1:nrow(color_distance)
@@ -36,9 +30,6 @@ map_graph <- function(
     set.seed(iseed)
     # color_shuffle_index_tmp_test <- unlist(color_shuffle_index_tmp)
     color_shuffle_index_tmp <- sample(color_shuffle_index_tmp)
-    # print(class(color_shuffle_index_tmp))
-    # color_shuffle_index_tmp_test <- unlist(color_shuffle_index_tmp)
-    # print(class(color_shuffle_index_tmp))
     color_distance_shuffle <- t(color_distance[color_shuffle_index_tmp, ])[color_shuffle_index_tmp, ]
     shuffle_distance_tmp <- matrix_distance(
       matrix_x = as.matrix(cluster_distance),
@@ -50,7 +41,6 @@ map_graph <- function(
       color_shuffle_index <- color_shuffle_index_tmp
     }
   }
-
   for (siter in 1:(random_max_iter*2)) {
     color_shuffle_index_tmp <- color_shuffle_index
     idx <- sample(1:length(color_shuffle_index_tmp), 2)
@@ -111,27 +101,25 @@ embed_graph <- function(
 
   # Rescale embedding to CIE Lab colorspace
   print("Rescaling embedding to CIE Lab colorspace...")
+  embedding <- embedding$layout
 
-  embedding <- sweep(embedding, 2, quantile(embedding, trim_fraction, na.rm = TRUE), FUN = "-")
+  embedding <- sweep(embedding, 2, quantile(embedding, probs = trim_fraction, na.rm = TRUE), FUN = "-")
   embedding[embedding < 0] <- 0
-  embedding <- embedding / quantile(embedding, probs = 1 - trim_fraction)
+  embedding <- sweep(embedding, 2, quantile(embedding, probs = 1 - trim_fraction, na.rm = TRUE), FUN = "/")
   embedding[embedding > 1] <- 1
 
   if (log_colors) {
-    embedding <- log10(embedding + max(quantile(embedding, 0.05), 1e-3))
-    embedding <- embedding - apply(embedding, 1, min)
-    embedding <- embedding / apply(embedding, 1, max)
+    embedding <- log10(embedding + max(quantile(embedding, probs = 0.05, na.rm = TRUE), 1e-3))
+    embedding <- sweep(embedding, 2, apply(embedding, 2, min), FUN = "-")
+    embedding <- sweep(embedding, 2, apply(embedding, 2, max), FUN = "/")
   }
 
-  embedding[, 1] <- embedding[, 1] * (l_range[2] - l_range[1])
-  embedding[, 1] <- embedding[, 1] + l_range[1]
-  embedding[, 2:3] <- embedding[, 2:3] - 0.5
-  embedding[, 2:3] <- embedding[, 2:3] * 200
-
+  embedding[, 1] <- embedding[, 1] * (l_range[2] - l_range[1]) + l_range[1]
+  embedding[, 2:3] <- (embedding[, 2:3] - 0.5) * 200
   print("Optimizing cluster color mapping...")
   lab_to_hex <- apply(embedding, 1, lab_to_hex)
   color_mapping <- setNames(as.list(lab_to_hex), rownames(cluster_distance))
-
+  color_mapping <- unlist(color_mapping)
   return(color_mapping)
 }
 

@@ -44,7 +44,7 @@ assign_color <- function(
       return(color_mapping)
     } else {
       # Mode 2
-      print(paste("Using", image_palette, "..."))
+      # print(paste("Using", image_palette, "..."))
       print("Drawing appropriate colors from provided image...")
       palette <- extract_palette(reference_image = image_palette, n_colors = length(cluster_distance_matrix), colorblind_type=colorblind_type)
     }

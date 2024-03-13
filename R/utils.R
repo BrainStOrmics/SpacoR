@@ -62,17 +62,19 @@ rgb_to_hex <- function(rgb_code) {
 #' @title Convert CIE Lab color value to hex string
 #' @param lab_code CIE Lab color value
 #' @return color hex string
+#' @importFrom colorspace LAB
 #' @export
 lab_to_hex <- function(lab_code) {
-  lab_object <- LAB(lab_code[1], lab_code[2], lab_code[3])
-  xyz_object <- convert_color(lab_object, XYZColor)
-  rgb_object <- convert_color(xyz_object, sRGBColor)
 
-  # Clip to legal RGB color
-  rgb_object@coords[, "R"] <- pmin(pmax(rgb_object@coords[, "R"], 0), 1) #不超过1且不小于0
-  rgb_object@coords[, "G"] <- pmin(pmax(rgb_object@coords[, "G"], 0), 1)
-  rgb_object@coords[, "B"] <- pmin(pmax(rgb_object@coords[, "B"], 0), 1)
-  hex_color <- rgb(rgb_object, maxColorValue = 255)
+  lab_object <- LAB(L = lab_code[1], A = lab_code[2], B = lab_code[3])
+  
+  rgb_object <- as(lab_object, "sRGB")
+  
+  rgb_clipped <- pmax(pmin(rgb_object@coords, 1), 0)
+  
+  hex_color <- rgb(rgb_clipped[1], rgb_clipped[2], rgb_clipped[3], maxColorValue = 1)
+  
+  return(hex_color)
 }
 
 #' @rdname utils
@@ -271,13 +273,16 @@ simulate_cvd <- function(palette_hex, colorblind_type) {
 #' @param trim_percentile trim_percentile
 #' @param max_iteration max_iteration
 #' @param verbose verbose
+#' @import colorspace 
 #' @return lab_to_hex
+#' @importFrom OpenImageR RGB_to_Lab
 #' @export
 extract_palette <- function(reference_image, n_colors, colorblind_type,
                             l_range = c(20, 85), trim_percentile = 0.03,
                             max_iteration = 20, verbose = FALSE) {
-
-  lab_image <- convertColor(reference_image, from = "sRGB", to = "LAB")
+  set.seed(123)
+  lab_image <- RGB_to_Lab(reference_image)
+  
   # Make L, A, B into 20 bins each.
   print("Extracting color bins...")
   bin_index_l <- as.integer(lab_image[,,1] / 5)
@@ -292,23 +297,52 @@ extract_palette <- function(reference_image, n_colors, colorblind_type,
   bin_color_table <- table(numbered_bin_colors)
   bin_color_set <- as.integer(names(bin_color_table))
   bin_color_count <- as.integer(bin_color_table)
-
+  
+  #Debug：
+  print(paste("Before filtering, bin_color_set length:", length(bin_color_set)))
+  print(paste("Filtering thresholds - L range: ", l_range[1], "-", l_range[2], ", Trim percentile:", trim_percentile))
+  
   # Truncate color set by l_range, filter out infrequent colors
   filter <- (bin_color_set > (l_range[1] / 5 * 400)) &
     (bin_color_set < (l_range[2] / 5 * 400)) &
     (bin_color_count > quantile(bin_color_count, trim_percentile))
   bin_color_set <- bin_color_set[filter]
   bin_color_count <- bin_color_count[filter]
+  # Debug
+  if(length(bin_color_set) == 0) {
+    print("bin_color_set is empty.")
+    return(NULL)
+  }
+  
   lab_color_set <- vapply(bin_color_set, get_bin_color, FUN.VALUE = numeric(3))
+  #Debug 调试
+  if(!is.matrix(lab_color_set)) {
+    stop("lab_color_set is not a matrix.")
+  }
+  
   # Initiate palette, chosen by frequency and distinction
   print("Initiating palette...")
   sigma <- 80
   palette <- list()
-
+  
+  print(paste(":", dim(lab_color_set)))
+  
   for (i in 1:n_colors) {
     selected_index <- which.max(bin_color_count)
+ 
+    # 在尝试访问前，检查 selected_index 是否超出了 lab_color_set 的范围
+    if(selected_index <= nrow(lab_color_set)) {
+      palette[[i]] <- lab_color_set[selected_index, ]
+    } else {
+      print(paste("Selected index", selected_index, "is out of bounds for lab_color_set with", nrow(lab_color_set), "rows."))
+    }
+    # 确保 lab_color_set 是一个矩阵
+    if(!is.matrix(lab_color_set)) {
+      print("lab_color_set is not a matrix.")
+    }
+    
     palette[[i]] <- lab_color_set[selected_index, ]
-
+    
     # Update frequency to punish chosen colors and similar ones
     for (j in seq_along(bin_color_count)) {
       if (j == selected_index) {
