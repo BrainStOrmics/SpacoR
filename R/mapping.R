@@ -88,6 +88,7 @@ embed_graph <- function(
     log_colors = FALSE,
     trim_fraction = 0.0125
 ) {
+  set.seed(123)
   # Embed clusters into 3-dimensional space
   print("Calculating cluster embedding...")
 
@@ -139,6 +140,7 @@ cluster_mapping_iou <- function(
     cluster_label_mapping,
     cluster_label_reference
     ) {
+  set.seed(123)
   iou <- function(i, j) {
     I <- sum(cluster_label_mapping == i & cluster_label_reference == j)
     U <- sum(cluster_label_mapping == i | cluster_label_reference == j)

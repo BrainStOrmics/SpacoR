@@ -34,6 +34,7 @@ colorize <- function(
     n_neighbors = 16,
     ...
 ) {
+  set.seed(123)
   if (!is.null(manual_mapping)) {
     if (is.null(palette) && is.null(image_palette)) {
       print("Palette not provided, ignoring manual mapping to avoid color duplication with auto-generated ones.")

@@ -30,6 +30,7 @@ assign_color <- function(
     image_palette = NULL, #NULL
     ...
 ) {
+  set.seed(123)
   # Auto-generate a palette if not provided
   if (is.null(palette)) {
     print("palette not provided.")

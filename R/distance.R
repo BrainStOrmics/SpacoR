@@ -23,6 +23,7 @@ spatial_distance <- function( #TODO:optimize neighbor calculation
     n_neighbors = 16,
     n_cells = 3
 ) {
+  set.seed(123)
   unique_clusters <- unique(cell_labels)
   cluster_index <- as.list(seq_along(unique_clusters))
   names(cluster_index) <- unique_clusters
@@ -120,6 +121,7 @@ perceptual_distance <- function(
   colors,
   colorblind_type = c("none","protanopia", "deuteranopia", "tritanopia", "general")
 ){
+  set.seed(123)
   colors <- gsub("#", "", colors)
   # 验证颜色代码格式是否符合要求
   for (color in colors) {

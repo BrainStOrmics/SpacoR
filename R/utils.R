@@ -7,6 +7,7 @@
 #' @return the distance between two matrices
 #' @export
 matrix_distance <- function(matrix_x, matrix_y, metric = "manhattan") {
+  set.seed(123)
   stopifnot(dim(matrix_x) == dim(matrix_y)) # 确保矩阵尺寸相同
 
   metric <- tolower(metric)
@@ -29,7 +30,7 @@ matrix_distance <- function(matrix_x, matrix_y, metric = "manhattan") {
 #' @return integer values for RGB channels
 #' @export
 hex_to_rgb <- function(hex_code) {
-  # print(paste("Received hex_code in hex_to_rgb:", hex_code))  # 打印接收到的颜色代码
+  set.seed(123)
   hex_code <- gsub("#", "", hex_code)
   if (length(hex_code) != 1 || nchar(hex_code) != 6) {
     stop("Invalid color code in hex_to_rgb. Expected a single 6-character hex string.")
@@ -49,6 +50,7 @@ hex_to_rgb <- function(hex_code) {
 #' @return color hex string
 #' @export
 rgb_to_hex <- function(rgb_code) {
+  set.seed(123)
   if (length(rgb_code) != 3 || !all(sapply(rgb_code, is.numeric))) {
     stop("rgb_code must be a numeric vector with three elements.")
   }
@@ -65,7 +67,7 @@ rgb_to_hex <- function(rgb_code) {
 #' @importFrom colorspace LAB
 #' @export
 lab_to_hex <- function(lab_code) {
-
+  set.seed(123)
   lab_object <- LAB(L = lab_code[1], A = lab_code[2], B = lab_code[3])
   
   rgb_object <- as(lab_object, "sRGB")
@@ -84,6 +86,7 @@ lab_to_hex <- function(lab_code) {
 #' @return lms image matrix
 #' @export
 rgb_to_lms_img <- function(img) {
+  set.seed(123)
   # Implementation from https://gitlab.com/FloatFlow
   lms_matrix <- matrix(c(0.3904725, 0.07092586, 0.02314268,
                          0.54990437, 0.96310739, 0.12801221,
@@ -99,6 +102,7 @@ rgb_to_lms_img <- function(img) {
 #' @return RGB image matrix
 #' @export
 lms_to_rgb_img <- function(img) {
+  set.seed(123)
   ## Implementation from https://gitlab.com/FloatFlow
   rgb_matrix <- matrix(c(2.85831110, -0.210434776, -0.0418895045,
                          -1.62870796, 1.15841493, -0.118154333,
@@ -119,6 +123,7 @@ lms_to_rgb_img <- function(img) {
 #' @return the perceptual difference between two colors
 #' @export
 color_difference_rgb <- function(color_x, color_y) {
+  set.seed(123)
   color_x <- gsub("#", "", color_x)
   color_y <- gsub("#", "", color_y)
   # print(paste("color_x:", color_x, "color_y:", color_y))
@@ -146,6 +151,7 @@ color_difference_rgb <- function(color_x, color_y) {
 #' @return Lab values for the centroid color of this bin
 #' @export
 get_bin_color <- function(bin_number) {
+  set.seed(123)
   l <- bin_number %/% 400 * 5 + 2.5
   bin_number <- bin_number %% 400
 
@@ -165,6 +171,7 @@ get_bin_color <- function(bin_number) {
 #' @return the min distance
 #' @export
 palette_min_distance <- function(palette) {
+  set.seed(123)
   n_palette <- nrow(palette)
   distance_matrix <- matrix(1e10, nrow = n_palette, ncol = n_palette)
   for (i in 1:n_palette) {
@@ -191,6 +198,7 @@ palette_min_distance <- function(palette) {
 #' @return color_score
 #' @export
 color_score <- function(lab_color, color_count, palette, wn) {
+  set.seed(123)
   l <- lab_color[1]
   a <- lab_color[2]
   b <- lab_color[3]
@@ -242,6 +250,7 @@ color_score <- function(lab_color, color_count, palette, wn) {
 #' @return rgb_to_hex
 #' @export
 simulate_cvd <- function(palette_hex, colorblind_type) {
+  set.seed(123)
   ## Modified from https://gitlab.com/FloatFlow
   palette_rgb_img <- t(sapply(palette_hex, hex_to_rgb))
   palette_lms_img <- rgb_to_lms_img(palette_rgb_img)
@@ -297,10 +306,6 @@ extract_palette <- function(reference_image, n_colors, colorblind_type,
   bin_color_table <- table(numbered_bin_colors)
   bin_color_set <- as.integer(names(bin_color_table))
   bin_color_count <- as.integer(bin_color_table)
-  
-  #Debug：
-  print(paste("Before filtering, bin_color_set length:", length(bin_color_set)))
-  print(paste("Filtering thresholds - L range: ", l_range[1], "-", l_range[2], ", Trim percentile:", trim_percentile))
   
   # Truncate color set by l_range, filter out infrequent colors
   filter <- (bin_color_set > (l_range[1] / 5 * 400)) &
