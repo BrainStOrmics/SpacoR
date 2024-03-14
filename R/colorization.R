@@ -49,10 +49,6 @@ colorize <- function(
     manual_mapping <- list()
   }
   if (!is.null(palette)) {
-    # print(length(unique(cell_labels)))
-    # print(length(palette))
-    # stopifnot(length(unique(cell_labels)) <= length(palette),
-    #           paste("Palette not sufficient for", length(unique(cell_labels)), "cell types."))
   }
   # Construct cluster spatial distance matrix based on cell neighborhood
   print("Calculating cluster distance graph...")
@@ -62,7 +58,6 @@ colorize <- function(
     neighbor_weight = neighbor_weight,
     radius = radius,
     n_neighbors = n_neighbors
-    # neighbor_args = list(...)
   )
   # Calculate color mapping
   color_mapping <- assign_color(
@@ -70,8 +65,6 @@ colorize <- function(
     palette = palette,
     image_palette = image_palette,
     colorblind_type = colorblind_type
-    # mapping_args = list(...),
-    # embed_args = list(...)
   )
   # Restore manual colors, reorder color mapping by cluster names.
   # color_mapping <- c(mapping_args, embed_args)

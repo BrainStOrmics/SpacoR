@@ -40,7 +40,7 @@ assign_color <- function(
         cluster_distance = cluster_distance_matrix,
         # embed_args = list(...)
         )
-      color_mapping <- color_mapping[order(names(color_mapping))]
+      # color_mapping <- color_mapping[order(names(color_mapping))]
       return(color_mapping)
     } else {
       # Mode 2
@@ -59,6 +59,6 @@ assign_color <- function(
     color_distance = color_distance_matrix
     # mapping_args = list(...)
   )
-  color_mapping <- setNames(paste0("#", color_mapping),names(color_mapping))
+  # color_mapping <- setNames(paste0("#", color_mapping),names(color_mapping))
   return(color_mapping)
 }

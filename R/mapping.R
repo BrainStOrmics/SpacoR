@@ -62,7 +62,8 @@ map_graph <- function(
   color_mapping <- setNames(rownames(color_distance)[color_shuffle_index], rownames(cluster_distance))
   # color_mapping <- setNames(color_distance[color_shuffle_index], rownames(cluster_distance))
   color_mapping <- color_mapping[order(names(color_mapping))]
-
+  if (substring(color_mapping[[1]], 1, 1) != "#")
+    color_mapping <- setNames(paste0("#", color_mapping),names(color_mapping))
   return(color_mapping)
 }
 
@@ -91,7 +92,7 @@ embed_graph <- function(
   print("Calculating cluster embedding...")
 
   if (transformation == "mds") {
-    mds_result <- isoMDS(dist(cluster_distance), k = 3)
+    mds_result <- isoMDS(spam::dist(cluster_distance), k = 3)
     embedding <- mds_result$points
     set.seed(123)
   } else if (transformation == "umap") {
@@ -120,6 +121,7 @@ embed_graph <- function(
   lab_to_hex <- apply(embedding, 1, lab_to_hex)
   color_mapping <- setNames(as.list(lab_to_hex), rownames(cluster_distance))
   color_mapping <- unlist(color_mapping)
+  color_mapping <- color_mapping[order(names(color_mapping))]
   return(color_mapping)
 }
 
