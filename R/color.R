@@ -1,12 +1,12 @@
 #' @rdname color
-#' @title Core color mapping function for Spaco2.
+#' @title Core color mapping function for SpacoR.
 #' @name assign_color
 #' @description
 #' Assign Colors to Clusters Based on Distance Matrix.
 #' This function assigns colors to clusters based on a given distance matrix.
 #' It supports colorblind-friendly options and can automatically generate a color palette,
 #' use a predefined palette, or extract colors from an image.
-#' Spaco2 provides 3 basic color mapping mode in this function:
+#' SpacoR provides 3 basic color mapping mode in this function:
 #' 1. Optimize the mapping of a pre-defined color palette.
 #' 2. Extract colors from image.
 #' 3. Automatically generate colors within colorspace.
@@ -26,9 +26,8 @@
 assign_color <- function(
     cluster_distance_matrix = data.frame(),
     colorblind_type = c("none", "protanopia", "deuteranopia", "tritanopia", "general"),
-    palette = NULL, #NULL
-    image_palette = NULL, #NULL
-    ...
+    palette = NULL, 
+    image_palette = NULL
 ) {
   set.seed(123)
   # Auto-generate a palette if not provided
@@ -39,7 +38,6 @@ assign_color <- function(
       print("Auto-generating colors from CIE Lab colorspace...")
       color_mapping <- embed_graph(
         cluster_distance = cluster_distance_matrix,
-        # embed_args = list(...)
         )
       # color_mapping <- color_mapping[order(names(color_mapping))]
       return(color_mapping)
@@ -58,7 +56,6 @@ assign_color <- function(
   color_mapping <- map_graph(
     cluster_distance = cluster_distance_matrix,
     color_distance = color_distance_matrix
-    # mapping_args = list(...)
   )
   # color_mapping <- setNames(paste0("#", color_mapping),names(color_mapping))
   return(color_mapping)
