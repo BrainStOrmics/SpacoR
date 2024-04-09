@@ -13,8 +13,7 @@ colorize(
   manual_mapping = NULL,
   neighbor_weight = 0.5,
   radius = 90,
-  n_neighbors = 16,
-  ...
+  n_neighbors = 16
 )
 }
 \arguments{
@@ -48,7 +47,7 @@ Optimized color mapping for clusters, including cluster names and corresponding 
 }
 \description{
 Colorize cell clusters based on spatial distribution, so that spatially interlaced and spatially neighboring clusters are assigned with more perceptually different colors.
-Spaco2 provides 3 basic color mapping mode:
+SpacoR provides 3 basic color mapping mode:
 \enumerate{
 \item Optimize the mapping of a pre-defined color palette.
 \item Extract colors from image.

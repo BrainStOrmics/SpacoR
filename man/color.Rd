@@ -2,14 +2,13 @@
 % Please edit documentation in R/color.R
 \name{assign_color}
 \alias{assign_color}
-\title{Core color mapping function for Spaco2.}
+\title{Core color mapping function for SpacoR.}
 \usage{
 assign_color(
   cluster_distance_matrix = data.frame(),
   colorblind_type = c("none", "protanopia", "deuteranopia", "tritanopia", "general"),
   palette = NULL,
-  image_palette = NULL,
-  ...
+  image_palette = NULL
 )
 }
 \arguments{
@@ -38,7 +37,7 @@ Assign Colors to Clusters Based on Distance Matrix.
 This function assigns colors to clusters based on a given distance matrix.
 It supports colorblind-friendly options and can automatically generate a color palette,
 use a predefined palette, or extract colors from an image.
-Spaco2 provides 3 basic color mapping mode in this function:
+SpacoR provides 3 basic color mapping mode in this function:
 \enumerate{
 \item Optimize the mapping of a pre-defined color palette.
 \item Extract colors from image.
