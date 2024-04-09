@@ -3,7 +3,7 @@
 #' @name colorize
 #' @description
 #' Colorize cell clusters based on spatial distribution, so that spatially interlaced and spatially neighboring clusters are assigned with more perceptually different colors.
-#' Spaco2 provides 3 basic color mapping mode:
+#' SpacoR provides 3 basic color mapping mode:
 #' 1. Optimize the mapping of a pre-defined color palette.
 #' 2. Extract colors from image.
 #' 3. Automatically generate colors within colorspace.
@@ -26,13 +26,12 @@ colorize <- function(
     cell_coordinates,
     cell_labels,
     colorblind_type = c("none", "protanopia", "deuteranopia", "tritanopia", "general"),
-    palette = NULL, #NULL
-    image_palette = NULL, #NULL
-    manual_mapping = NULL, #NULL
+    palette = NULL, 
+    image_palette = NULL, 
+    manual_mapping = NULL, 
     neighbor_weight = 0.5, # TODO: confirm default value
     radius = 90, # TODO: confirm default value
-    n_neighbors = 16,
-    ...
+    n_neighbors = 16
 ) {
   set.seed(123)
   if (!is.null(manual_mapping)) {
@@ -68,8 +67,6 @@ colorize <- function(
     colorblind_type = colorblind_type
   )
   # Restore manual colors, reorder color mapping by cluster names.
-  # color_mapping <- c(mapping_args, embed_args)
-  # color_mapping <- color_mapping[order(names(color_mapping))]
   color_mapping <- unlist(color_mapping)
   return(color_mapping)
 }
