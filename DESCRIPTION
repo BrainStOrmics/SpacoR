@@ -7,7 +7,10 @@ Authors@R: c(person("zehua", "jing", email = "jingzehua20@mails.ucas.ac.cn", rol
              person("bolin", "yang", email = "yangbolin22@mails.ucas.ac.cn", role = "cre"))
 Depends: R (>= 3.2)
 Imports:
-  colorspace
+  colorspace,
+  FNN,
+  OpenImageR,
+  stats
 License: GPL-3
 Encoding: UTF-8
 Roxygen: list(markdown = TRUE)
